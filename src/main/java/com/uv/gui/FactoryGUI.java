@@ -18,8 +18,8 @@ public class FactoryGUI {
         EMPLEADO, DEPARTAMENTO
     };
 
-    public static IController create(ControllerType type) {
-        IController controller = null;
+    public static VentanaGUI create(ControllerType type) {
+        VentanaGUI controller = null;
         switch (type) {
             case EMPLEADO:
                 controller = new EmpleadoGUI();

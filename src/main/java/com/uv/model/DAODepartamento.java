@@ -11,8 +11,6 @@ import java.util.logging.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 /**
  *
@@ -38,7 +36,10 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
                 return re;
             }
         };
-        return SessionDB.getInstance().execute(t);
+        SessionDB sesion = SessionDB.getInstance();
+        boolean re = sesion.execute(t);
+        sesion.getSession().close();
+        return re;
 
     }
 
@@ -60,7 +61,10 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
                 return re;
             }
         };
-        return SessionDB.getInstance().execute(t);
+        SessionDB sesion = SessionDB.getInstance();
+        boolean re = sesion.execute(t);
+        sesion.getSession().close();
+        return re;
 
     }
 
@@ -84,13 +88,15 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
                 return re;
             }
         };
-        return SessionDB.getInstance().execute(t);
-
+        SessionDB sesion = SessionDB.getInstance();
+        boolean re = sesion.execute(t);
+        sesion.getSession().close();
+        return re;
     }
 
     @Override
     public List<Departamento> consultar() {
-       List<Departamento> listDpm = new ArrayList<>();
+        List<Departamento> listDpm = new ArrayList<>();
 
         TransactionDB<Departamento> t = new TransactionDB<Departamento>() {
             @Override
@@ -112,7 +118,9 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
                 return re;
             }
         };
-        SessionDB.getInstance().execute(t);
+        SessionDB sesion = SessionDB.getInstance();
+        sesion.execute(t);
+        sesion.getSession().close();
         return listDpm;
 
     }
@@ -121,7 +129,6 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
     public Departamento buscarID(long clave) {
         Departamento departamento = new Departamento();
 
-         
         TransactionDB<Departamento> t = new TransactionDB<Departamento>() {
             @Override
             public boolean execute(Session session) {
@@ -142,8 +149,9 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
                 return re;
             }
         };
-        SessionDB.getInstance().execute(t);
-        
+        SessionDB sesion = SessionDB.getInstance();
+        sesion.execute(t);
+        sesion.getSession().close();
         return departamento;
 
     }

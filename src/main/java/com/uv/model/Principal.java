@@ -4,14 +4,10 @@
  */
 package com.uv.model;
 
-import com.uv.gui.DepartamentoGUI;
-import com.uv.gui.EmpleadoGUI;
+
 import com.uv.gui.FactoryGUI;
-import com.uv.gui.IController;
+import com.uv.gui.VentanaGUI;
 import java.util.Scanner;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 /**
  *
@@ -27,8 +23,8 @@ public class Principal {
         Scanner teclado = new Scanner(System.in);
         int seleccion = 0;
         boolean bandera = true;
-        IController empController = FactoryGUI.create(FactoryGUI.ControllerType.EMPLEADO);
-        IController depController = FactoryGUI.create(FactoryGUI.ControllerType.DEPARTAMENTO);
+        VentanaGUI empController = FactoryGUI.create(FactoryGUI.ControllerType.EMPLEADO);
+        VentanaGUI depController = FactoryGUI.create(FactoryGUI.ControllerType.DEPARTAMENTO);
 
         
         
@@ -61,9 +57,9 @@ public class Principal {
                     System.out.println("1 para Empleado, 2 para Departamento");
                     desicion = teclado.nextInt();
                     if (desicion == 1) {
-                        empController.borrar();
+                        empController.eliminar();
                     } else {
-                        depController.borrar();
+                        depController.eliminar();
                     }
                     break;
                 case 4:

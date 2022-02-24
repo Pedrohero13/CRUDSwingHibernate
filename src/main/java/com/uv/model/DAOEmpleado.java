@@ -45,8 +45,10 @@ public class DAOEmpleado implements IDAOGeneral<Empleado> {
     @Override
     public boolean modificar(Empleado pojo) {
         TransactionDB<Empleado> t = new TransactionDB<Empleado>(pojo) {
+            
             @Override
             public boolean execute(Session session) {
+                System.out.println(pojo.getClaveDepartamento());
                 boolean re = false;
                 try {
                     session.beginTransaction();
@@ -60,7 +62,10 @@ public class DAOEmpleado implements IDAOGeneral<Empleado> {
                 return re;
             }
         };
-        return SessionDB.getInstance().execute(t);
+        SessionDB sesion = SessionDB.getInstance();
+        boolean re = sesion.execute(t);
+        sesion.getSession().close();
+        return re;
 
     }
 
@@ -84,7 +89,10 @@ public class DAOEmpleado implements IDAOGeneral<Empleado> {
                 return re;
             }
         };
-        return SessionDB.getInstance().execute(t);
+        SessionDB sesion = SessionDB.getInstance();
+        boolean re = sesion.execute(t);
+        sesion.getSession().close();
+        return re;
 
     }
 
@@ -113,7 +121,9 @@ public class DAOEmpleado implements IDAOGeneral<Empleado> {
                 return re;
             }
         };
-        SessionDB.getInstance().execute(t);
+       SessionDB sesion = SessionDB.getInstance();
+        sesion.execute(t);
+        sesion.getSession().close();
         return listEmp;
 
     }
@@ -143,7 +153,9 @@ public class DAOEmpleado implements IDAOGeneral<Empleado> {
                 return re;
             }
         };
-        SessionDB.getInstance().execute(t);
+        SessionDB sesion = SessionDB.getInstance();
+        sesion.execute(t);
+        sesion.getSession().close();
         
         return empleado;
     }

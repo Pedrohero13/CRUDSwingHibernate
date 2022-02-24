@@ -12,95 +12,115 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author pedro
  */
-public class DepartamentoGUI implements IController{
+public class DepartamentoGUI extends VentanaGUI {
 
-    public  Scanner teclado = new Scanner(System.in);
+    public Scanner teclado = new Scanner(System.in);
 
-    public  void guardar() {
-        Departamento nuevo = new Departamento();
+    public DepartamentoGUI() {
+        this.setTitle("Departamentos");
+        labelTitulo.setText("Departamentos");
+        this.txtDepartamento.setVisible(false);
+        this.txtDireccion.setVisible(false);
+        this.txtTelefono.setVisible(false);
+        this.labelDepartamento.setVisible(false);
+        this.labelDireccion.setVisible(false);
+        this.labelTelefono.setVisible(false);
+    }
+
+    @Override
+    public void guardar() {
+        IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
         
-        System.out.println("NOMBRE:");
-        nuevo.setNombre(teclado.nextLine());
-
-        IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-
-        boolean res = dao.guardar(nuevo);
+        Departamento departamento = new Departamento();
+        departamento.setNombre(txtNombre.getText());
+        boolean res = dao.guardar(departamento);
         if (res) {
-            System.out.println("Guardado correctamente");
+            JOptionPane.showMessageDialog(this, "Guardado correctamente");
         } else {
-            System.out.println("No se pudo guardar");
+            JOptionPane.showMessageDialog(this, "NO Guardado ");
         }
 
     }
 
-    public  void modificar() {
-        Departamento nuevo = new Departamento();
-        System.out.println("CLAVE:");
-        nuevo.setClave(teclado.nextLong());
-        teclado.nextLine();
-        System.out.println("NOMBRE:");
-        nuevo.setNombre(teclado.nextLine());
-
+    @Override
+    public void modificar() {
         IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-
-        boolean res = dao.modificar(nuevo);
-        if (res) {
-            System.out.println("Moficado correctamente");
-        } else {
-            System.out.println("No se pudo modificar");
-        }
-    }
-
-    public  void borrar() {
-        System.out.println("CLAVE:");
-        long clave = teclado.nextLong();
-        teclado.nextLine();
-        IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-
-        boolean res = dao.borrar(clave);
-        if (res) {
-            System.out.println("Borrado correctamente");
-        } else {
-            System.out.println("No se pudo borrar");
-        }
-
-    }
-    
-    
-    public  void consultar() {
-        IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-        List<Departamento> lista = dao.consultar();
-        for (Departamento departamento : lista) {
-            System.out.println("CLAVE: " + departamento.getClave() + " NOMBRE: " + departamento.getNombre());
-            Collection<Empleado> collDep = collDep=departamento.getEmpleadoCollection();
-            for (Empleado empleado : collDep) {
-                System.out.println("Empleado: "+ empleado.getNombre()+" Direccion: "+empleado.getDireccion() 
-                        +" Telefono: "+ empleado.getTelefono());
-            }
-            
-            
-            
-        }
         
+        Departamento departamento = new Departamento();
+        departamento.setClave(Integer.parseInt(txtClave.getText()));
+        departamento.setNombre(txtNombre.getText());
+        boolean res = dao.modificar(departamento);
+        if (res) {
+            JOptionPane.showMessageDialog(this, "Modificado correctamente");
+        } else {
+            JOptionPane.showMessageDialog(this, "No Modificado ");
+        }
     }
 
-    public  void buscarID() {
+    @Override
+    public void consultar() {
+        Vector<String> columnas = new Vector<>();
+        columnas.add("clave");
+        columnas.add("nombre");
+        
 
-        System.out.println("CLAVE:");
-        long clave = teclado.nextLong();
-        teclado.nextLine();
+        Vector datos = new Vector();
+
         IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-        Departamento departamento = dao.buscarID(clave);
-        System.out.println("CLAVE: " + departamento.getClave() + " NOMBRE: " + departamento.getNombre());
-        Collection<Empleado> collDep = collDep=departamento.getEmpleadoCollection();
-            for (Empleado empleado : collDep) {
-                System.out.println("Empleado: "+ empleado.getNombre()+" Direccion: "+empleado.getDireccion() 
-                        +" Telefono: "+ empleado.getTelefono());
-            }
+        List<Departamento> lstDepartamentos = dao.consultar();
+        for (Departamento departamento : lstDepartamentos) {
+            Vector row = new Vector();
+            row.add(departamento.getClave());
+            row.add(departamento.getNombre());
+        
+
+            datos.add(row);
+        }
+
+        DefaultTableModel model = new DefaultTableModel(datos, columnas);
+        tabla.setModel(model);
+
+    }
+
+    @Override
+    public void buscarID() {
+
+        Vector<String> columnas = new Vector<>();
+        columnas.add("clave");
+        columnas.add("nombre");
+        
+
+        Vector datos = new Vector();
+
+        IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
+        Departamento departamento =dao.buscarID(Integer.parseInt(txtClave.getText()));
+            Vector row = new Vector();
+            row.add(departamento.getClave());
+            row.add(departamento.getNombre());
+            
+            datos.add(row);
+        
+
+        DefaultTableModel model = new DefaultTableModel(datos, columnas);
+        tabla.setModel(model);
+    }
+
+    @Override
+    public void eliminar() {
+        IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
+        boolean res = dao.borrar(Integer.parseInt(txtClave.getText()));
+        if (res) {
+            JOptionPane.showMessageDialog(this, "Borrado correctamente");
+        } else {
+            JOptionPane.showMessageDialog(this, "NO Borrado ");
+        }
     }
 }

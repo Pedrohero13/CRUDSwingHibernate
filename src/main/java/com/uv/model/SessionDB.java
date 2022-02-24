@@ -21,10 +21,9 @@ public class SessionDB {
     private static SessionDB cx = null;//singleton
 
     public static SessionDB getInstance() {
-        if (cx == null) {
+        
             cx = new SessionDB();
-        }
-        return cx;
+             return cx;
     }
     private Session session;
 
@@ -44,6 +43,9 @@ public class SessionDB {
     }
     public void closeSession(){
          session.close();
+    }
+    public Session getSession(){
+        return session;
     }
 
 }

@@ -10,102 +10,125 @@ import com.uv.model.FactoryDAO;
 import com.uv.model.IDAOGeneral;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author pedro
  */
-public class EmpleadoGUI implements IController {
+public class EmpleadoGUI extends VentanaGUI {
 
     public Scanner teclado = new Scanner(System.in);
 
+    public EmpleadoGUI() {
+        this.setTitle("Empleados");
+        this.labelTitulo.setText("Empleados");
+    }
+
+    @Override
     public void guardar() {
         IDAOGeneral<Empleado> dao = FactoryDAO.create(FactoryDAO.DAOType.EMPLEADO);
         IDAOGeneral<Departamento> daodep = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-        Empleado nuevo = new Empleado();
-        System.out.println("NOMBRE:");
-        nuevo.setNombre(teclado.nextLine());
-        System.out.println("DIRECCION:");
-        nuevo.setDireccion(teclado.nextLine());
-        System.out.println("TELEFONO:");
-        nuevo.setTelefono(teclado.nextLine());
-        System.out.println("CLAVE DEPARTAMENTO:");
-        nuevo.setClaveDepartamento(daodep.buscarID(teclado.nextLong()));
+        Empleado empleado = new Empleado();
+        empleado.setNombre(txtNombre.getText());
+        empleado.setDireccion(txtDireccion.getText());
+        empleado.setTelefono(txtTelefono.getText());
+        empleado.setClaveDepartamento(daodep.buscarID(Integer.parseInt(txtDepartamento.getText())));
 
-        boolean res = dao.guardar(nuevo);
+        boolean res = dao.guardar(empleado);
         if (res) {
-            System.out.println("Guardado correctamente");
-            teclado.nextLine();
+            JOptionPane.showMessageDialog(this, "Guardado correctamente");
         } else {
-            System.out.println("No se pudo guardar");
-            teclado.nextLine();
-
+            JOptionPane.showMessageDialog(this, "Guardado correctamente");
         }
 
     }
 
+    @Override
     public void modificar() {
-        
+
         IDAOGeneral<Empleado> dao = FactoryDAO.create(FactoryDAO.DAOType.EMPLEADO);
         IDAOGeneral<Departamento> daodep = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-        Empleado nuevo = new Empleado();
-        
-        System.out.println("CLAVE:");
-        nuevo.setClave(teclado.nextLong());
-        teclado.nextLine();
-        System.out.println("NOMBRE:");
-        nuevo.setNombre(teclado.nextLine());
-        System.out.println("DIRECCION:");
-        nuevo.setDireccion(teclado.nextLine());
-        System.out.println("TELEFONO:");
-        nuevo.setTelefono(teclado.nextLine());
-        
-        System.out.println("CLAVE DEPARTAMENTO:");
-        nuevo.setClaveDepartamento(daodep.buscarID(teclado.nextLong()));
-        
-        boolean res = dao.modificar(nuevo);
+
+        Empleado empleado = new Empleado();
+        empleado.setClave(Integer.parseInt(txtClave.getText()));
+        empleado.setNombre(txtNombre.getText());
+        empleado.setDireccion(txtDireccion.getText());
+        empleado.setTelefono(txtTelefono.getText());
+        empleado.setClaveDepartamento(daodep.buscarID(Integer.parseInt(txtDepartamento.getText())));
+
+        boolean res = dao.modificar(empleado);
         if (res) {
-            System.out.println("Moficado correctamente");
+            JOptionPane.showMessageDialog(this, "Modificado correctamente");
         } else {
-            System.out.println("No se pudo modificar");
+            JOptionPane.showMessageDialog(this, "Modificado correctamente");
         }
     }
 
-    public void borrar() {
-        System.out.println("CLAVE:");
-        long clave = teclado.nextLong();
-        teclado.nextLine();
-        IDAOGeneral<Empleado> dao = FactoryDAO.create(FactoryDAO.DAOType.EMPLEADO);
-
-        boolean res = dao.borrar(clave);
-        if (res) {
-            System.out.println("Borrado correctamente");
-        } else {
-            System.out.println("No se pudo borrar");
-        }
-
-    }
-
+    @Override
     public void consultar() {
+        Vector<String> columnas = new Vector<>();
+        columnas.add("clave");
+        columnas.add("nombre");
+        columnas.add("direccion");
+        columnas.add("telefono");
+        columnas.add("Departamento");
+
+        Vector datos = new Vector();
+
         IDAOGeneral<Empleado> dao = FactoryDAO.create(FactoryDAO.DAOType.EMPLEADO);
-        List<Empleado> lista = dao.consultar();
-        for (Empleado emp : lista) {
-            System.out.println("CLAVE: " + emp.getClave() + " NOMBRE: " + emp.getNombre() + " DIRECCION: "
-                    + emp.getDireccion() + " TELEFONO: " + emp.getTelefono() + " Departamento: " + emp.getClaveDepartamento().getNombre());
+        List<Empleado> lstEmpleados = dao.consultar();
+        for (Empleado empleado : lstEmpleados) {
+            Vector row = new Vector();
+            row.add(empleado.getClave());
+            row.add(empleado.getNombre());
+            row.add(empleado.getDireccion());
+            row.add(empleado.getTelefono());
+            row.add(empleado.getClaveDepartamento().getNombre());
+
+            datos.add(row);
         }
+
+        DefaultTableModel model = new DefaultTableModel(datos, columnas);
+        tabla.setModel(model);
     }
 
+    @Override
     public void buscarID() {
-
-        System.out.println("CLAVE:");
-        long clave = teclado.nextLong();
-        teclado.nextLine();
         IDAOGeneral<Empleado> dao = FactoryDAO.create(FactoryDAO.DAOType.EMPLEADO);
-        Empleado nuevo = dao.buscarID(clave);
-        System.out.println("CLAVE: " + nuevo.getClave() + " NOMBRE: " + nuevo.getNombre() + " DIRECCION: "
-                + nuevo.getDireccion() + " TELEFONO: " + nuevo.getTelefono() + " DEPARTAMENTO: " + nuevo.getClaveDepartamento().getNombre());
 
+        Empleado empleado = dao.buscarID(Integer.parseInt(txtClave.getText()));
+        Vector<String> columnas = new Vector<>();
+        columnas.add("clave");
+        columnas.add("nombre");
+        columnas.add("direccion");
+        columnas.add("telefono");
+        columnas.add("Departamento");
+        Vector datos = new Vector();
+
+        Vector row = new Vector();
+        row.add(empleado.getClave());
+        row.add(empleado.getNombre());
+        row.add(empleado.getDireccion());
+        row.add(empleado.getTelefono());
+        row.add(empleado.getClaveDepartamento().getNombre());
+        datos.add(row);
+
+        DefaultTableModel model = new DefaultTableModel(datos, columnas);
+        tabla.setModel(model);
+
+    }
+
+    @Override
+    public void eliminar() {
+        IDAOGeneral<Empleado> dao = FactoryDAO.create(FactoryDAO.DAOType.EMPLEADO);
+        boolean res = dao.borrar(Integer.parseInt(txtClave.getText()));
+        if (res) {
+            JOptionPane.showMessageDialog(this, "Borrado correctamente");
+        } else {
+            JOptionPane.showMessageDialog(this, "Borrado correctamente");
+        }
     }
 }
