@@ -5,9 +5,9 @@
  */
 package com.uv.gui;
 
-import com.uv.model.DAODepartamento;
-import com.uv.model.DAOEmpleado;
-import com.uv.model.IDAOGeneral;
+import com.uv.datos.DAODepartamento;
+import com.uv.datos.DAOEmpleado;
+import com.uv.datos.IDAOGeneral;
 
 /**
  *

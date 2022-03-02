@@ -4,10 +4,10 @@
  */
 package com.uv.gui;
 
-import com.uv.model.Departamento;
-import com.uv.model.Empleado;
-import com.uv.model.FactoryDAO;
-import com.uv.model.IDAOGeneral;
+import com.uv.datos.Departamento;
+import com.uv.datos.Empleado;
+import com.uv.datos.FactoryDAO;
+import com.uv.datos.IDAOGeneral;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
