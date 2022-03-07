@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 /**
  *
@@ -20,51 +21,55 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
 
     @Override
     public boolean guardar(Departamento pojo) {
-        TransactionDB<Departamento> t = new TransactionDB<Departamento>(pojo) {
+        TransactionDB<Departamento> transaction = new TransactionDB<Departamento>(pojo) {
             @Override
-            public boolean execute(Session session) {
+            public boolean execute(SessionFactory sessionFactory) {
                 boolean re = false;
+                Session session = null;
                 try {
+                    session = sessionFactory.openSession();
                     session.beginTransaction();
                     session.save(pojo);
                     session.getTransaction().commit();
+                    session.close();
                     re = true;
+
                 } catch (HibernateException ex) {
                     session.getTransaction().rollback();
+                    session.close();
                     Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return re;
             }
         };
-        SessionDB sesion = SessionDB.getInstance();
-        boolean re = sesion.execute(t);
-        sesion.getSession().close();
-        return re;
+        return SessionDB.getInstance().execute(transaction);
 
     }
 
     @Override
     public boolean modificar(Departamento pojo) {
-        TransactionDB<Departamento> t = new TransactionDB<Departamento>(pojo) {
+        TransactionDB<Departamento> transaction = new TransactionDB<Departamento>(pojo) {
             @Override
-            public boolean execute(Session session) {
+            public boolean execute(SessionFactory sessionFactory) {
                 boolean re = false;
+                Session session = null;
                 try {
+                    session = sessionFactory.openSession();
                     session.beginTransaction();
                     session.update(pojo);
                     session.getTransaction().commit();
+                    session.close();
                     re = true;
+
                 } catch (HibernateException ex) {
                     session.getTransaction().rollback();
+                    session.close();
                     Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return re;
             }
         };
-        SessionDB sesion = SessionDB.getInstance();
-        boolean re = sesion.execute(t);
-        sesion.getSession().close();
-        return re;
+        return SessionDB.getInstance().execute(transaction);
 
     }
 
@@ -72,55 +77,58 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
     public boolean borrar(long clave) {
         Departamento pojo = new Departamento();
         pojo.setClave(clave);
-        TransactionDB<Departamento> t = new TransactionDB<Departamento>(pojo) {
+        TransactionDB<Departamento> transaction = new TransactionDB<Departamento>(pojo) {
             @Override
-            public boolean execute(Session session) {
+            public boolean execute(SessionFactory sessionFactory) {
                 boolean re = false;
+                Session session = null;
                 try {
+                    session = sessionFactory.openSession();
                     session.beginTransaction();
                     session.delete(pojo);
                     session.getTransaction().commit();
+                    session.close();
                     re = true;
+
                 } catch (HibernateException ex) {
                     session.getTransaction().rollback();
+                    session.close();
                     Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return re;
             }
         };
-        SessionDB sesion = SessionDB.getInstance();
-        boolean re = sesion.execute(t);
-        sesion.getSession().close();
-        return re;
+        return SessionDB.getInstance().execute(transaction);
     }
 
     @Override
     public List<Departamento> consultar() {
         List<Departamento> listDpm = new ArrayList<>();
-
-        TransactionDB<Departamento> t = new TransactionDB<Departamento>() {
+        TransactionDB<Departamento> transaction = new TransactionDB<Departamento>() {
             @Override
-            public boolean execute(Session session) {
+            public boolean execute(SessionFactory sessionFactory) {
                 boolean re = false;
+                Session session = null;
                 try {
+                    session = sessionFactory.openSession();
                     session.beginTransaction();
                     Query query = session.createQuery("from Departamento ORDER BY clave");
                     for (Object departamento : query.list()) {
                         listDpm.add((Departamento) departamento);
                     }
-
                     session.getTransaction().commit();
+                    session.close();
+                    re = true;
 
                 } catch (HibernateException ex) {
                     session.getTransaction().rollback();
+                    session.close();
                     Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return re;
             }
         };
-        SessionDB sesion = SessionDB.getInstance();
-        sesion.execute(t);
-        sesion.getSession().close();
+        SessionDB.getInstance().execute(transaction);
         return listDpm;
 
     }
@@ -128,30 +136,34 @@ public class DAODepartamento implements IDAOGeneral<Departamento> {
     @Override
     public Departamento buscarID(long clave) {
         Departamento departamento = new Departamento();
-
-        TransactionDB<Departamento> t = new TransactionDB<Departamento>() {
+        TransactionDB<Departamento> transaction = new TransactionDB<Departamento>() {
             @Override
-            public boolean execute(Session session) {
+            public boolean execute(SessionFactory sessionFactory) {
                 boolean re = false;
+                Session session = null;
                 try {
+                    session = sessionFactory.openSession();
                     session.beginTransaction();
                     pojo = (Departamento) session.get(Departamento.class, clave);
-
-                    departamento.setClave(pojo.getClave());
-                    departamento.setNombre(pojo.getNombre());
-                    departamento.setEmpleadoCollection(pojo.getEmpleadoCollection());
-                    session.getTransaction().commit();
-                    re = true;
+                    if (pojo != null) {
+                        departamento.setClave(pojo.getClave());
+                        departamento.setNombre(pojo.getNombre());
+                        departamento.setEmpleadoCollection(pojo.getEmpleadoCollection());
+                        session.getTransaction().commit();
+                        session.close();
+                        re = true;
+                    }
                 } catch (HibernateException ex) {
                     session.getTransaction().rollback();
-                    Logger.getLogger(DAODepartamento.class.getName()).log(Level.SEVERE, null, ex);
+                    session.close();
+                    Logger.getLogger(DAOEmpleado.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return re;
             }
         };
-        SessionDB sesion = SessionDB.getInstance();
-        sesion.execute(t);
-        sesion.getSession().close();
+        SessionDB.getInstance()
+                .execute(transaction);
+
         return departamento;
 
     }

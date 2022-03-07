@@ -11,6 +11,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.Service;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 /**
  *
@@ -21,31 +24,29 @@ public class SessionDB {
     private static SessionDB cx = null;//singleton
 
     public static SessionDB getInstance() {
-        
+        if (cx == null) {
             cx = new SessionDB();
-             return cx;
+        }
+        return cx;
     }
-    private Session session;
+    private SessionFactory sessionFactory;
 
     private SessionDB() {
         try {
-            SessionFactory sessionFactory = new Configuration().configure()
-                    .buildSessionFactory();
-            session = sessionFactory.openSession();
+            Configuration configuration = new Configuration();
+            configuration.configure();
+            ServiceRegistry serviceRegistry  = new ServiceRegistryBuilder().applySettings(
+                    configuration.getProperties()).buildServiceRegistry();
+            
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         } catch (HibernateException ex) {
             Logger.getLogger(SessionDB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public boolean execute(TransactionDB transaction) {
-        boolean response = transaction.execute(session);
+        boolean response = transaction.execute(sessionFactory);
         return response;
-    }
-    public void closeSession(){
-         session.close();
-    }
-    public Session getSession(){
-        return session;
     }
 
 }

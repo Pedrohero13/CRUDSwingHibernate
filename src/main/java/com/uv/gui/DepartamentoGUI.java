@@ -38,7 +38,7 @@ public class DepartamentoGUI extends VentanaGUI {
     @Override
     public void guardar() {
         IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-        
+
         Departamento departamento = new Departamento();
         departamento.setNombre(txtNombre.getText());
         boolean res = dao.guardar(departamento);
@@ -53,7 +53,7 @@ public class DepartamentoGUI extends VentanaGUI {
     @Override
     public void modificar() {
         IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-        
+
         Departamento departamento = new Departamento();
         departamento.setClave(Integer.parseInt(txtClave.getText()));
         departamento.setNombre(txtNombre.getText());
@@ -70,7 +70,6 @@ public class DepartamentoGUI extends VentanaGUI {
         Vector<String> columnas = new Vector<>();
         columnas.add("clave");
         columnas.add("nombre");
-        
 
         Vector datos = new Vector();
 
@@ -80,7 +79,6 @@ public class DepartamentoGUI extends VentanaGUI {
             Vector row = new Vector();
             row.add(departamento.getClave());
             row.add(departamento.getNombre());
-        
 
             datos.add(row);
         }
@@ -94,23 +92,25 @@ public class DepartamentoGUI extends VentanaGUI {
     public void buscarID() {
 
         Vector<String> columnas = new Vector<>();
-        columnas.add("clave");
-        columnas.add("nombre");
-        
-
-        Vector datos = new Vector();
-
         IDAOGeneral<Departamento> dao = FactoryDAO.create(FactoryDAO.DAOType.DEPARTAMENTO);
-        Departamento departamento =dao.buscarID(Integer.parseInt(txtClave.getText()));
+        Departamento departamento = dao.buscarID(Integer.parseInt(txtClave.getText()));
+        if (departamento.getNombre() != null) {
+            columnas.add("clave");
+            columnas.add("nombre");
+
+            Vector datos = new Vector();
+
             Vector row = new Vector();
             row.add(departamento.getClave());
             row.add(departamento.getNombre());
-            
-            datos.add(row);
-        
 
-        DefaultTableModel model = new DefaultTableModel(datos, columnas);
-        tabla.setModel(model);
+            datos.add(row);
+
+            DefaultTableModel model = new DefaultTableModel(datos, columnas);
+            tabla.setModel(model);
+        } else{
+            JOptionPane.showMessageDialog(this, "No se encontro el registro", null ,JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override

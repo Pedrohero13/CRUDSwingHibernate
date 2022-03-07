@@ -6,6 +6,7 @@
 package com.uv.datos;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 /**
  *
@@ -20,5 +21,5 @@ public abstract class TransactionDB<T> {
     public TransactionDB() {
     }
     
-    public abstract boolean execute(Session session);
+    public abstract boolean execute(SessionFactory sessionFactory);
 }

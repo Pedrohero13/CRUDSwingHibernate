@@ -22,8 +22,8 @@
         
  
         <!-- Annotated entity classes -->
-        <mapping class="com.uv.model.Empleado"/>
-        <mapping class="com.uv.model.Departamento"/>
+        <mapping class="com.uv.datos.Empleado"/>
+        <mapping class="com.uv.datos.Departamento"/>
         
     </session-factory>
 </hibernate-configuration>

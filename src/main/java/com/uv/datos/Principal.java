@@ -80,8 +80,7 @@ public class Principal {
                         depController.buscarID();
                     }
                     break;
-                case 6:
-                    SessionDB.getInstance().closeSession();
+                case 6:   
                     bandera = false;
                     break;
             }
